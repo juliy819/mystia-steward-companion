@@ -212,43 +212,6 @@
   --steward-score-low-fg: #a98967;
 }
 
-.steward-tag-preferred {
-  background-color: var(--steward-tag-preferred-bg);
-  border-color: var(--steward-tag-preferred-border);
-  color: var(--steward-tag-preferred-fg);
-}
-
-.steward-tag-disliked {
-  background-color: var(--steward-tag-disliked-bg);
-  border-color: var(--steward-tag-disliked-border);
-  color: var(--steward-tag-disliked-fg);
-}
-
-.steward-tag-cancelled {
-  background-color: var(--steward-tag-cancelled-bg);
-  border-color: var(--steward-tag-cancelled-border);
-  color: var(--steward-tag-cancelled-fg);
-  text-decoration-line: line-through;
-}
-
-.steward-tag-extra {
-  background-color: var(--steward-tag-extra-bg);
-  border-color: var(--steward-tag-extra-border);
-  color: var(--steward-tag-extra-fg);
-}
-
-.steward-tag-matched {
-  background-color: var(--steward-tag-matched-bg);
-  border-color: var(--steward-tag-matched-border);
-  color: var(--steward-tag-matched-fg);
-}
-
-.steward-tag-default {
-  background-color: var(--steward-tag-default-bg);
-  border-color: var(--steward-tag-default-border);
-  color: var(--steward-tag-default-fg);
-}
-
 .steward-score-high {
   background-color: var(--steward-score-high-bg);
   color: var(--steward-score-high-fg);
@@ -705,6 +668,50 @@ html::-webkit-scrollbar-thumb:hover,
   border-color: color-mix(in srgb, var(--border) 50%, transparent);
   background-color: color-mix(in srgb, var(--muted) 44%, transparent);
   color: var(--muted-foreground);
+}
+
+/**
+ * Tag 语义色。
+ *
+ * 上面的中性徽标配色是双类选择器，这里的语义色必须同样带有 `.steward-badge` 和变体限定，
+ * 否则会被统一的中性配色覆盖，喜好、厌恶、命中、抵消和加料色都显示不出来。
+ * 只覆盖中性变体；`default`（实心）变体保留自己的配色。
+ */
+.steward-badge:is([data-ui-variant='secondary'], [data-ui-variant='outline'], [data-ui-variant='ghost']).steward-tag-preferred {
+  background-color: var(--steward-tag-preferred-bg);
+  border-color: var(--steward-tag-preferred-border);
+  color: var(--steward-tag-preferred-fg);
+}
+
+.steward-badge:is([data-ui-variant='secondary'], [data-ui-variant='outline'], [data-ui-variant='ghost']).steward-tag-disliked {
+  background-color: var(--steward-tag-disliked-bg);
+  border-color: var(--steward-tag-disliked-border);
+  color: var(--steward-tag-disliked-fg);
+}
+
+.steward-badge:is([data-ui-variant='secondary'], [data-ui-variant='outline'], [data-ui-variant='ghost']).steward-tag-cancelled {
+  background-color: var(--steward-tag-cancelled-bg);
+  border-color: var(--steward-tag-cancelled-border);
+  color: var(--steward-tag-cancelled-fg);
+  text-decoration-line: line-through;
+}
+
+.steward-badge:is([data-ui-variant='secondary'], [data-ui-variant='outline'], [data-ui-variant='ghost']).steward-tag-extra {
+  background-color: var(--steward-tag-extra-bg);
+  border-color: var(--steward-tag-extra-border);
+  color: var(--steward-tag-extra-fg);
+}
+
+.steward-badge:is([data-ui-variant='secondary'], [data-ui-variant='outline'], [data-ui-variant='ghost']).steward-tag-matched {
+  background-color: var(--steward-tag-matched-bg);
+  border-color: var(--steward-tag-matched-border);
+  color: var(--steward-tag-matched-fg);
+}
+
+.steward-badge:is([data-ui-variant='secondary'], [data-ui-variant='outline'], [data-ui-variant='ghost']).steward-tag-default {
+  background-color: var(--steward-tag-default-bg);
+  border-color: var(--steward-tag-default-border);
+  color: var(--steward-tag-default-fg);
 }
 
 .steward-input-root,

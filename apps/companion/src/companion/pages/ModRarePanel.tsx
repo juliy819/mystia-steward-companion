@@ -12,6 +12,8 @@ import {
 } from '@/companion/domain/service-recommendations';
 import { usePageRecommendations } from '@/companion/hooks/usePageRecommendations';
 import { useEffectiveCustomRecipesDisclosure } from '@/companion/hooks/useEffectiveCustomRecipesDisclosure';
+import { buildRareCustomerPreferenceSummary } from '@/companion/domain/rare-customer-preferences';
+import { RareCustomerPreferenceSummaryPanel } from '@/companion/pages/service/RareCustomerPreferenceSummaryPanel';
 import type { CompanionPreferences } from '@/companion/preferences';
 import type { CustomRecipeData, FavoriteData, RecommendationStateSnapshot, RuntimeSets, ToggleBeverageFavorite, ToggleRecipeFavorite } from '@/companion/types';
 import {
@@ -215,6 +217,7 @@ export function ModRarePanel({
               </div>
             </CardContent>
           </Card>
+          <RareCustomerPreferenceSummaryPanel summary={buildRareCustomerPreferenceSummary(selectedCustomer)} />
           {favoriteError && (
             <div className="border border-destructive/30 px-3 py-2 text-sm text-destructive">
               {favoriteError}

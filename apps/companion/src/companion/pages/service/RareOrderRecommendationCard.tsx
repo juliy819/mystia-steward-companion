@@ -5,9 +5,11 @@ import {
   findRecipeFavorite,
   recipeFavoriteKey,
 } from '@/companion/domain/favorites';
+import { buildRareCustomerPreferenceSummary } from '@/companion/domain/rare-customer-preferences';
 import { formatDesk } from '@/companion/formatters';
 import { useEffectiveCustomRecipesDisclosure } from '@/companion/hooks/useEffectiveCustomRecipesDisclosure';
 import { normalizeFocusRecommendationLimit } from '@/companion/preferences';
+import { RareCustomerPreferenceSummaryPanel } from '@/companion/pages/service/RareCustomerPreferenceSummaryPanel';
 import {
   BeverageRecommendationRow,
   EffectiveCustomRecipesDetails,
@@ -63,6 +65,7 @@ export function RareOrderRecommendationCard({
   const visibleRecipes = item.recipes.slice(0, normalizeFocusRecommendationLimit(recipeLimit));
   const visibleBeverages = item.beverages.slice(0, normalizeFocusRecommendationLimit(beverageLimit));
   const targetCookerName = visibleRecipes[0]?.recipe.cooker ?? '';
+  const preferenceSummary = buildRareCustomerPreferenceSummary(item.customer);
   const customRecipeDisclosure = useEffectiveCustomRecipesDisclosure(
     item.customer.id,
     item.order.foodTag,
@@ -100,6 +103,11 @@ export function RareOrderRecommendationCard({
           )
         : undefined}
     >
+      <RareCustomerPreferenceSummaryPanel
+        summary={preferenceSummary}
+        compact={compact}
+        className={compact ? 'mt-1.5' : 'mt-2'}
+      />
       <div className={compact ? `mt-2 ${DENSE_TWO_COLUMN_GRID_TIGHT}` : `mt-3 ${DENSE_TWO_COLUMN_GRID}`}>
         <div>
           <div

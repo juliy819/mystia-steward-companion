@@ -33,6 +33,7 @@ import type {
 import type { buildRecommendationDataIndexes } from '@/lib/recommendation-data';
 import { ALL_PLACES, type PlaceName, type RareCustomerCatalogItem } from '@/lib/catalog-types';
 import {
+  selectExtraIngredientTags,
   type NormalBeverageRecommendation,
   type NormalRecipeRecommendation,
   type RareBeverageRecommendation,
@@ -66,19 +67,38 @@ export function LowStockColumn({
 function TagSummary({
   tags,
   cancelledTags,
+  addedTags = [],
   matchedTags = [],
   dislikedTags = [],
 }: {
   tags: string[];
   cancelledTags: string[];
+  addedTags?: string[];
   matchedTags?: string[];
   dislikedTags?: string[];
 }) {
   if (tags.length === 0 && cancelledTags.length === 0) return null;
 
+  const added = new Set(addedTags);
+  const recipeTags = tags.filter((tag) => !added.has(tag));
+  const extraTags = tags.filter((tag) => added.has(tag));
+
   return (
-    <div className="mt-1 flex flex-wrap gap-1">
-      <TagPillGroup tags={tags} matchedTags={matchedTags} dislikedTags={dislikedTags} />
+    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+      {recipeTags.length > 0 && (
+        <TagPillGroup tags={recipeTags} matchedTags={matchedTags} dislikedTags={dislikedTags} />
+      )}
+      {extraTags.length > 0 && (
+        <span className="flex flex-wrap items-center gap-1" data-recipe-extra-ingredient-tags="true">
+          <span className="shrink-0 text-xs text-muted-foreground">加料</span>
+          <TagPillGroup
+            tags={extraTags}
+            tone="added"
+            matchedTags={matchedTags}
+            dislikedTags={dislikedTags}
+          />
+        </span>
+      )}
       {cancelledTags.map((tag) => (
         <TagPill key={`cancelled-${tag}`} tone="suppressed">
           已抵消 {tag}
@@ -630,6 +650,11 @@ export function RecipeRecommendationRow({
 }) {
   const totalCost = recipe.baseCost + recipe.extraCost;
   const preferenceMatch = customer ? matchRarePreferenceTags(customer, recipe.allTags) : null;
+  const extraIngredientTags = selectExtraIngredientTags({
+    recipe: recipe.recipe,
+    extraIngredients: recipe.extraIngredients,
+    activeTags: recipe.allTags,
+  });
   const extras = recipe.extraIngredients.length === 0
     ? '不加料'
     : recipe.extraIngredients
@@ -686,6 +711,7 @@ export function RecipeRecommendationRow({
         <TagSummary
           tags={recipe.allTags}
           cancelledTags={recipe.cancelledTags}
+          addedTags={extraIngredientTags}
           matchedTags={preferenceMatch?.likedTags}
           dislikedTags={preferenceMatch?.dislikedTags}
         />

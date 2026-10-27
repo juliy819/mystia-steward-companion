@@ -27,6 +27,7 @@ export {
   hasForbiddenIngredientTag,
   resolveFoodTags,
   resolveTagPriority,
+  selectExtraIngredientTags,
 } from '@/recommendation-engine/tag-resolution';
 export {
   DEFAULT_RECOMMENDATION_SORT_PROFILE,

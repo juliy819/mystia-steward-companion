@@ -109,6 +109,28 @@ export function findTagsThatCanSuppress(
 }
 
 /**
+ * 找出这个候选料理里由加料带来、且配方本身没有的生效 Tag。
+ *
+ * 用于界面标注：加料是玩家自己选的，需要看得出某几个 Tag 是加料带来的。
+ * 只统计进入最终生效集合的 Tag；配方已自带的 Tag 不计入，因为不加料也有。
+ */
+export function selectExtraIngredientTags({
+  recipe,
+  extraIngredients,
+  activeTags,
+}: {
+  recipe: RecipeCatalogItem;
+  extraIngredients: IngredientCatalogItem[];
+  activeTags: readonly string[];
+}): string[] {
+  if (extraIngredients.length === 0) return [];
+
+  const recipeTags = new Set(recipe.positiveTags);
+  const extraTags = new Set(extraIngredients.flatMap((ingredient) => ingredient.tags));
+  return activeTags.filter((tag) => extraTags.has(tag) && !recipeTags.has(tag));
+}
+
+/**
  * 判断某个额外食材是否会直接带来配方负面 Tag。
  */
 export function hasForbiddenIngredientTag(

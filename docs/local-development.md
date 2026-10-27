@@ -183,7 +183,8 @@ corepack pnpm artifacts:clean
 corepack pnpm mock:api
 ```
 
-默认 API 地址为 `http://127.0.0.1:32145`，token 为 `mock-token`。
+默认 API 地址为 `http://127.0.0.1:32145`，token 为 `mock-token`。该端口与 Mod 的 `LocalApi/Port`
+默认值相同；进游戏前先停掉 mock，避免真实 API 端口被占用。
 
 终端二：
 
@@ -209,6 +210,29 @@ corepack pnpm preview -- --host 127.0.0.1 --port 4173
 
 浏览器/Vite 开发模式会直接访问 mock API；打包后的桌面和 Android 应用通过 Tauri
 `request_local_api` 原生命令访问 Mod。不要通过放宽 CSP 或加入 WebView direct-fetch 回退来掩盖原生代理错误。
+
+需要留下可对比的界面证据时，用自动截图代替人工翻页：
+
+```bash
+corepack pnpm preview:capture
+```
+
+`preview:capture` 会在 1280、640 和 390 三档宽度打开“经营中 → 推荐 → 稀客”和“推荐料理 → 稀客”，
+断言订单卡片里的稀客偏好摘要可见、未被裁切、且排在推荐列表之前，然后把整页、订单卡片、偏好特写、
+候选行与加料 Tag 特写，以及带红框标注和隐藏新增区块的改动前后对照图写入 `temp/preview-screenshots/`
+（`temp/` 已被忽略）。浏览器默认读取 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`，未设置时使用本机
+Chrome 或 Edge。
+
+mock 数据只有 8 道料理、6 款酒水和 4 个稀客，标签和候选都比较少。需要检查“标签多、候选长”的排版时，
+用预览专用富数据场景：
+
+```bash
+PREVIEW_SCENARIO=rich PREVIEW_OUTPUT_DIR=temp/preview-rich corepack pnpm preview:capture
+```
+
+该场景由 [`scripts/preview-scenario-rich.mjs`](../scripts/preview-scenario-rich.mjs) 提供一位 6 喜好、
+4 厌恶、5 酒水偏好的稀客和 10 道料理、3 款酒水，并且在截图时拦截 `/runtime-data` 与 `/snapshot`，
+不改动 mock 服务本身，其它审计看到的 mock 数据保持原样。
 
 Playwright 环境变量、浏览器安装和按功能选择的巡检命令见
 [验证指南](validation-guide.md#playwright-巡检)。

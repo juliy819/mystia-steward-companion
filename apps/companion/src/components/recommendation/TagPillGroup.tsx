@@ -44,22 +44,30 @@ export function TagPillGroup({
   tone = 'neutral',
   matchedTags = [],
   matchedTone = 'match',
+  dislikedTags = [],
+  dislikedTone = 'negative',
   className,
 }: {
   tags: readonly string[];
   tone?: TagPillTone;
   matchedTags?: readonly string[];
   matchedTone?: TagPillTone;
+  dislikedTags?: readonly string[];
+  dislikedTone?: TagPillTone;
   className?: string;
 }) {
   if (tags.length === 0) return null;
 
   const matched = new Set(matchedTags);
+  const disliked = new Set(dislikedTags);
 
   return (
     <div className={composeClassNames('flex flex-wrap gap-1', className)}>
       {tags.map((tag) => (
-        <TagPill key={tag} tone={matched.has(tag) ? matchedTone : tone}>
+        <TagPill
+          key={tag}
+          tone={disliked.has(tag) ? dislikedTone : matched.has(tag) ? matchedTone : tone}
+        >
           {tag}
         </TagPill>
       ))}

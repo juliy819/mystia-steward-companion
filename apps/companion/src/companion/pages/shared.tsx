@@ -6,6 +6,7 @@ import { CustomerCoverageBadges } from '@/components/recommendation/CustomerCove
 import { TagPill, TagPillGroup } from '@/components/recommendation/TagPillGroup';
 import { Badge, Button, EmptyRow, EmptyState, NumberInput, SegmentedControl, SettingHelpField, SliderField, SwitchField } from '@/components/ui-kit';
 import { INVENTORY_SORT_OPTIONS, type InventorySortMode } from '@/companion/domain/inventory-sorting';
+import { matchRarePreferenceTags } from '@/companion/domain/rare-customer-preferences';
 import { formatIngredientNamesWithQty, formatIngredientWithQty, formatQtySuffix } from '@/companion/formatters';
 import {
   MAX_FOCUS_RECOMMENDATION_ROWS,
@@ -31,11 +32,11 @@ import type {
 } from '@/companion/types';
 import type { buildRecommendationDataIndexes } from '@/lib/recommendation-data';
 import { ALL_PLACES, type PlaceName, type RareCustomerCatalogItem } from '@/lib/catalog-types';
-import type {
-  NormalBeverageRecommendation,
-  NormalRecipeRecommendation,
-  RareBeverageRecommendation,
-  RareRecipeRecommendation,
+import {
+  type NormalBeverageRecommendation,
+  type NormalRecipeRecommendation,
+  type RareBeverageRecommendation,
+  type RareRecipeRecommendation,
 } from '@/recommendation-engine';
 import {
   type LowStockEntry,
@@ -65,15 +66,19 @@ export function LowStockColumn({
 function TagSummary({
   tags,
   cancelledTags,
+  matchedTags = [],
+  dislikedTags = [],
 }: {
   tags: string[];
   cancelledTags: string[];
+  matchedTags?: string[];
+  dislikedTags?: string[];
 }) {
   if (tags.length === 0 && cancelledTags.length === 0) return null;
 
   return (
     <div className="mt-1 flex flex-wrap gap-1">
-      <TagPillGroup tags={tags} />
+      <TagPillGroup tags={tags} matchedTags={matchedTags} dislikedTags={dislikedTags} />
       {cancelledTags.map((tag) => (
         <TagPill key={`cancelled-${tag}`} tone="suppressed">
           已抵消 {tag}
@@ -604,6 +609,7 @@ export function RecipeRecommendationRow({
   ownedIngredientQty,
   ingredientIdByName,
   favorite,
+  customer,
   favoriteKey = '',
   favoriteBusyKey = '',
   compact = false,
@@ -615,6 +621,7 @@ export function RecipeRecommendationRow({
   ownedIngredientQty: Record<number, number>;
   ingredientIdByName: Map<string, number>;
   favorite?: FavoriteRecipeEntry | null;
+  customer?: RareCustomerCatalogItem | null;
   favoriteKey?: string;
   favoriteBusyKey?: string;
   compact?: boolean;
@@ -622,6 +629,7 @@ export function RecipeRecommendationRow({
   onToggleFavorite?: () => void;
 }) {
   const totalCost = recipe.baseCost + recipe.extraCost;
+  const preferenceMatch = customer ? matchRarePreferenceTags(customer, recipe.allTags) : null;
   const extras = recipe.extraIngredients.length === 0
     ? '不加料'
     : recipe.extraIngredients
@@ -674,7 +682,14 @@ export function RecipeRecommendationRow({
       gamepadRowKey={`recipe:${favoriteKey}`}
       gamepadOccurrenceKey={gamepadOccurrenceKey}
     >
-      {!compact && <TagSummary tags={recipe.allTags} cancelledTags={recipe.cancelledTags} />}
+      {!compact && (
+        <TagSummary
+          tags={recipe.allTags}
+          cancelledTags={recipe.cancelledTags}
+          matchedTags={preferenceMatch?.likedTags}
+          dislikedTags={preferenceMatch?.dislikedTags}
+        />
+      )}
     </RecommendationItem>
   );
 }

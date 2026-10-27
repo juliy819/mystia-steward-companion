@@ -257,6 +257,7 @@ export function ModRarePanel({
                     index={index}
                     ownedIngredientQty={runtimeSets.ownedIngredientQty}
                     ingredientIdByName={dataIndexes.ingredientIdByName}
+                    customer={selectedCustomer}
                     favorite={findRecipeFavorite(favorites, selectedCustomer.id, foodTag, recipe)}
                     favoriteKey={recipeFavoriteKey(selectedCustomer.id, foodTag, recipe)}
                     favoriteBusyKey={favoriteBusyKey}

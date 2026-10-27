@@ -147,6 +147,7 @@ export function RareOrderRecommendationCard({
                 index={index}
                 ownedIngredientQty={runtimeSets?.ownedIngredientQty ?? {}}
                 ingredientIdByName={dataIndexes.ingredientIdByName}
+                customer={item.customer}
                 favorite={findRecipeFavorite(favorites, item.customer.id, item.order.foodTag, recipe)}
                 favoriteKey={recipeFavoriteKey(item.customer.id, item.order.foodTag, recipe)}
                 favoriteBusyKey={favoriteBusyKey}
